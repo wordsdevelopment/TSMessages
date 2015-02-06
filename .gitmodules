@@ -1,0 +1,3 @@
+[submodule "Submodules/HexColors"]
+	path = Submodules/HexColors
+	url = git@github.com:russellquinn/HexColors.git
