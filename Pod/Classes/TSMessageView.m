@@ -213,7 +213,7 @@ canBeDismissedByUser:(BOOL)dismissingEnabled
         
         int64_t titleNumberOfLines = [[current valueForKey:@"titleNumberOfLines"] intValue];
         self.titleLabel.numberOfLines = titleNumberOfLines;
-        self.titleLabel.lineBreakMode = NSLineBreakByWordWrapping;
+        self.titleLabel.lineBreakMode = [[current valueForKey:@"lineBreakMode"] intValue];
         
         [self addSubview:self.titleLabel];
         
@@ -378,6 +378,9 @@ canBeDismissedByUser:(BOOL)dismissingEnabled
                                        screenWidth - padding - self.textSpaceLeft - self.textSpaceRight,
                                        0.0);
     [self.titleLabel sizeToFit];
+    CGRect newTitleFrame = self.titleLabel.frame;
+    newTitleFrame.size.width = screenWidth - padding - self.textSpaceLeft - self.textSpaceRight;
+    self.titleLabel.frame = newTitleFrame;
     
     if ([self.subtitle length])
     {
@@ -386,6 +389,9 @@ canBeDismissedByUser:(BOOL)dismissingEnabled
                                              screenWidth - padding - self.textSpaceLeft - self.textSpaceRight,
                                              0.0);
         [self.contentLabel sizeToFit];
+        CGRect newContentFrame = self.contentLabel.frame;
+        newContentFrame.size.width = screenWidth - padding - self.textSpaceLeft - self.textSpaceRight;
+        self.contentLabel.frame = newContentFrame;
         
         currentHeight = self.contentLabel.frame.origin.y + self.contentLabel.frame.size.height;
     }
