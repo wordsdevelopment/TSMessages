@@ -35,6 +35,8 @@ static NSMutableDictionary *_notificationDesign;
 /** The view controller this message is displayed in */
 @property (nonatomic, strong) UIViewController *viewController;
 
+/** The design dictionary for this view */
+@property (nonatomic, strong) NSDictionary *designDictionary;
 
 /** Internal properties needed to resize the view on device rotation properly */
 @property (nonatomic, strong) UILabel *titleLabel;
@@ -156,6 +158,7 @@ canBeDismissedByUser:(BOOL)dismissingEnabled
         }
         
         current = [notificationDesign valueForKey:currentString];
+        self.designDictionary = current;
         
         NSNumber *xPaddingNumber = [current valueForKey:@"xPadding"];
         CGFloat xPadding = xPaddingNumber ? [xPaddingNumber floatValue] : [self padding];
@@ -258,22 +261,28 @@ canBeDismissedByUser:(BOOL)dismissingEnabled
         }
         
         // Set up button (if set)
-        if ([buttonTitle length])
-        {
-            _button = [UIButton buttonWithType:UIButtonTypeCustom];
-            
-            
-            UIImage *buttonBackgroundImage = [UIImage imageNamed:[current valueForKey:@"buttonBackgroundImageName"]];
-            
+        _button = [UIButton buttonWithType:UIButtonTypeCustom];
+        
+        
+        UIImage *buttonBackgroundImage = [UIImage imageNamed:[current valueForKey:@"buttonBackgroundImageName"]];
+        
+        if (buttonBackgroundImage) {
             buttonBackgroundImage = [buttonBackgroundImage resizableImageWithCapInsets:UIEdgeInsetsMake(15.0, 12.0, 15.0, 11.0)];
-            
-            if (!buttonBackgroundImage)
-            {
-                buttonBackgroundImage = [UIImage imageNamed:[current valueForKey:@"NotificationButtonBackground"]];
-                buttonBackgroundImage = [buttonBackgroundImage resizableImageWithCapInsets:UIEdgeInsetsMake(15.0, 12.0, 15.0, 11.0)];
-            }
-            
             [self.button setBackgroundImage:buttonBackgroundImage forState:UIControlStateNormal];
+        }
+        
+        
+        UIImage *buttonImage = [UIImage imageNamed:[current valueForKey:@"buttonImageName"]];
+        if (buttonImage) {
+            [self.button setImage:buttonImage forState:UIControlStateNormal];
+            self.button.frame = CGRectMake(0, 0, buttonImage.size.width, buttonImage.size.height);
+        }
+        UIImage *buttonHighlightedImage = [UIImage imageNamed:[current valueForKey:@"buttonImageHighlightedName"]];
+        if (buttonHighlightedImage) {
+            [self.button setImage:buttonHighlightedImage forState:UIControlStateHighlighted];
+        }
+        
+        if (self.buttonTitle) {
             [self.button setTitle:self.buttonTitle forState:UIControlStateNormal];
             
             UIColor *buttonTitleShadowColor = [UIColor colorFromHexString:[current valueForKey:@"buttonTitleShadowColor"]];
@@ -294,21 +303,20 @@ canBeDismissedByUser:(BOOL)dismissingEnabled
             self.button.titleLabel.font = [UIFont boldSystemFontOfSize:14.0];
             self.button.titleLabel.shadowOffset = CGSizeMake([[current valueForKey:@"buttonTitleShadowOffsetX"] floatValue],
                                                              [[current valueForKey:@"buttonTitleShadowOffsetY"] floatValue]);
-            [self.button addTarget:self
-                            action:@selector(buttonTapped:)
-                  forControlEvents:UIControlEventTouchUpInside];
-            
-            self.button.contentEdgeInsets = UIEdgeInsetsMake(0.0, 5.0, 0.0, 5.0);
-            [self.button sizeToFit];
-            self.button.frame = CGRectMake(screenWidth - xPadding - self.button.frame.size.width,
-                                           0.0,
-                                           self.button.frame.size.width,
-                                           31.0);
-            
-            [self addSubview:self.button];
-            
-            self.textSpaceRight = self.button.frame.size.width + xPadding;
         }
+        
+        [self.button addTarget:self
+                        action:@selector(buttonTapped:)
+              forControlEvents:UIControlEventTouchUpInside];
+        
+        self.button.frame = CGRectMake(screenWidth - xPadding - self.button.frame.size.width,
+                                       0.0,
+                                       self.button.frame.size.width,
+                                       self.button.frame.size.height);
+        
+        [self addSubview:self.button];
+        
+        self.textSpaceRight = self.button.frame.size.width + xPadding;
         
         // Add a border on the bottom (or on the top, depending on the view's postion)
         if (![TSMessage iOS7StyleEnabled])
@@ -371,26 +379,29 @@ canBeDismissedByUser:(BOOL)dismissingEnabled
 {
     CGFloat currentHeight;
     CGFloat screenWidth = self.viewController.view.bounds.size.width;
-    CGFloat padding = [self padding];
+    NSNumber *xPaddingNumber = [self.designDictionary valueForKey:@"xPadding"];
+    CGFloat xPadding = xPaddingNumber ? [xPaddingNumber floatValue] : [self padding];
+    NSNumber *yPaddingNumber = [self.designDictionary valueForKey:@"yPadding"];
+    CGFloat yPadding = yPaddingNumber ? [yPaddingNumber floatValue] : [self padding];
     
     self.titleLabel.frame = CGRectMake(self.textSpaceLeft,
-                                       padding + 1.0f,
-                                       screenWidth - padding - self.textSpaceLeft - self.textSpaceRight,
+                                       yPadding + 4.0f,
+                                       screenWidth - xPadding - self.textSpaceLeft - self.textSpaceRight,
                                        0.0);
     [self.titleLabel sizeToFit];
     CGRect newTitleFrame = self.titleLabel.frame;
-    newTitleFrame.size.width = screenWidth - padding - self.textSpaceLeft - self.textSpaceRight;
+    newTitleFrame.size.width = screenWidth - xPadding - self.textSpaceLeft - self.textSpaceRight;
     self.titleLabel.frame = newTitleFrame;
     
     if ([self.subtitle length])
     {
         self.contentLabel.frame = CGRectMake(self.textSpaceLeft,
                                              self.titleLabel.frame.origin.y + self.titleLabel.frame.size.height,
-                                             screenWidth - padding - self.textSpaceLeft - self.textSpaceRight,
+                                             screenWidth - xPadding - self.textSpaceLeft - self.textSpaceRight,
                                              0.0);
         [self.contentLabel sizeToFit];
         CGRect newContentFrame = self.contentLabel.frame;
-        newContentFrame.size.width = screenWidth - padding - self.textSpaceLeft - self.textSpaceRight;
+        newContentFrame.size.width = screenWidth - xPadding - self.textSpaceLeft - self.textSpaceRight;
         self.contentLabel.frame = newContentFrame;
         
         currentHeight = self.contentLabel.frame.origin.y + self.contentLabel.frame.size.height;
@@ -401,14 +412,14 @@ canBeDismissedByUser:(BOOL)dismissingEnabled
         currentHeight = self.titleLabel.frame.origin.y + self.titleLabel.frame.size.height;
     }
     
-    currentHeight += padding;
+    currentHeight += yPadding;
     
     if (self.iconImageView)
     {
         // Check if that makes the popup larger (height)
-        if (self.iconImageView.frame.origin.y + self.iconImageView.frame.size.height + padding > currentHeight)
+        if (self.iconImageView.frame.origin.y + self.iconImageView.frame.size.height + yPadding > currentHeight)
         {
-            currentHeight = self.iconImageView.frame.origin.y + self.iconImageView.frame.size.height + padding;
+            currentHeight = self.iconImageView.frame.origin.y + self.iconImageView.frame.size.height + yPadding;
         }
         else
         {
