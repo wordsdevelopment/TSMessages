@@ -7,7 +7,7 @@
 //
 
 #import "TSMessageView.h"
-#import "HexColor.h"
+#import "UIColor+HexColors.h"
 #import "TSBlurView.h"
 #import "TSMessage.h"
 
@@ -125,7 +125,6 @@ canBeDismissedByUser:(BOOL)dismissingEnabled
         self.buttonCallback = buttonCallback;
         
         CGFloat screenWidth = self.viewController.view.bounds.size.width;
-        CGFloat padding = [self padding];
         
         NSDictionary *current;
         NSString *currentString;
@@ -158,6 +157,10 @@ canBeDismissedByUser:(BOOL)dismissingEnabled
         
         current = [notificationDesign valueForKey:currentString];
         
+        NSNumber *xPaddingNumber = [current valueForKey:@"xPadding"];
+        CGFloat xPadding = xPaddingNumber ? [xPaddingNumber floatValue] : [self padding];
+        NSNumber *yPaddingNumber = [current valueForKey:@"yPadding"];
+        CGFloat yPadding = yPaddingNumber ? [yPaddingNumber floatValue] : [self padding];
         
         if (!image && [[current valueForKey:@"imageName"] length])
         {
@@ -181,16 +184,16 @@ canBeDismissedByUser:(BOOL)dismissingEnabled
             // On iOS 7 and above use a blur layer instead (not yet finished)
             _backgroundBlurView = [[TSBlurView alloc] init];
             self.backgroundBlurView.autoresizingMask = (UIViewAutoresizingFlexibleWidth);
-            self.backgroundBlurView.blurTintColor = [UIColor colorWithHexString:current[@"backgroundColor"]];
+            self.backgroundBlurView.blurTintColor = [UIColor colorFromHexString:current[@"backgroundColor"]];
             [self addSubview:self.backgroundBlurView];
         }
         
-        UIColor *fontColor = [UIColor colorWithHexString:[current valueForKey:@"textColor"]
-                                                   alpha:1.0];
+        UIColor *fontColor = [UIColor colorFromHexString:[current valueForKey:@"textColor"]
+                                                  ];
         
         
-        self.textSpaceLeft = 2 * padding;
-        if (image) self.textSpaceLeft += image.size.width + 2 * padding;
+        self.textSpaceLeft = xPadding;
+        if (image) self.textSpaceLeft += image.size.width + xPadding;
         
         // Set up title label
         _titleLabel = [[UILabel alloc] init];
@@ -204,11 +207,14 @@ canBeDismissedByUser:(BOOL)dismissingEnabled
         } else {
             [self.titleLabel setFont:[UIFont boldSystemFontOfSize:fontSize]];
         }
-        [self.titleLabel setShadowColor:[UIColor colorWithHexString:[current valueForKey:@"shadowColor"] alpha:1.0]];
+        [self.titleLabel setShadowColor:[UIColor colorFromHexString:[current valueForKey:@"shadowColor"]]];
         [self.titleLabel setShadowOffset:CGSizeMake([[current valueForKey:@"shadowOffsetX"] floatValue],
                                                     [[current valueForKey:@"shadowOffsetY"] floatValue])];
-        self.titleLabel.numberOfLines = 0;
+        
+        int64_t titleNumberOfLines = [[current valueForKey:@"titleNumberOfLines"] intValue];
+        self.titleLabel.numberOfLines = titleNumberOfLines;
         self.titleLabel.lineBreakMode = NSLineBreakByWordWrapping;
+        
         [self addSubview:self.titleLabel];
         
         // Set up content label (if set)
@@ -217,7 +223,7 @@ canBeDismissedByUser:(BOOL)dismissingEnabled
             _contentLabel = [[UILabel alloc] init];
             [self.contentLabel setText:subtitle];
             
-            UIColor *contentTextColor = [UIColor colorWithHexString:[current valueForKey:@"contentTextColor"] alpha:1.0];
+            UIColor *contentTextColor = [UIColor colorFromHexString:[current valueForKey:@"contentTextColor"]];
             if (!contentTextColor)
             {
                 contentTextColor = fontColor;
@@ -233,8 +239,10 @@ canBeDismissedByUser:(BOOL)dismissingEnabled
             }
             [self.contentLabel setShadowColor:self.titleLabel.shadowColor];
             [self.contentLabel setShadowOffset:self.titleLabel.shadowOffset];
+            
+            int64_t contentNumberOfLines = [[current valueForKey:@"contentNumberOfLines"] intValue];
+            self.contentLabel.numberOfLines = contentNumberOfLines;
             self.contentLabel.lineBreakMode = self.titleLabel.lineBreakMode;
-            self.contentLabel.numberOfLines = 0;
             
             [self addSubview:self.contentLabel];
         }
@@ -242,8 +250,8 @@ canBeDismissedByUser:(BOOL)dismissingEnabled
         if (image)
         {
             _iconImageView = [[UIImageView alloc] initWithImage:image];
-            self.iconImageView.frame = CGRectMake(padding * 2,
-                                                  padding,
+            self.iconImageView.frame = CGRectMake(xPadding,
+                                                  yPadding,
                                                   image.size.width,
                                                   image.size.height);
             [self addSubview:self.iconImageView];
@@ -268,7 +276,7 @@ canBeDismissedByUser:(BOOL)dismissingEnabled
             [self.button setBackgroundImage:buttonBackgroundImage forState:UIControlStateNormal];
             [self.button setTitle:self.buttonTitle forState:UIControlStateNormal];
             
-            UIColor *buttonTitleShadowColor = [UIColor colorWithHexString:[current valueForKey:@"buttonTitleShadowColor"] alpha:1.0];
+            UIColor *buttonTitleShadowColor = [UIColor colorFromHexString:[current valueForKey:@"buttonTitleShadowColor"]];
             if (!buttonTitleShadowColor)
             {
                 buttonTitleShadowColor = self.titleLabel.shadowColor;
@@ -276,7 +284,7 @@ canBeDismissedByUser:(BOOL)dismissingEnabled
             
             [self.button setTitleShadowColor:buttonTitleShadowColor forState:UIControlStateNormal];
             
-            UIColor *buttonTitleTextColor = [UIColor colorWithHexString:[current valueForKey:@"buttonTitleTextColor"] alpha:1.0];
+            UIColor *buttonTitleTextColor = [UIColor colorFromHexString:[current valueForKey:@"buttonTitleTextColor"]];
             if (!buttonTitleTextColor)
             {
                 buttonTitleTextColor = fontColor;
@@ -292,14 +300,14 @@ canBeDismissedByUser:(BOOL)dismissingEnabled
             
             self.button.contentEdgeInsets = UIEdgeInsetsMake(0.0, 5.0, 0.0, 5.0);
             [self.button sizeToFit];
-            self.button.frame = CGRectMake(screenWidth - padding - self.button.frame.size.width,
+            self.button.frame = CGRectMake(screenWidth - xPadding - self.button.frame.size.width,
                                            0.0,
                                            self.button.frame.size.width,
                                            31.0);
             
             [self addSubview:self.button];
             
-            self.textSpaceRight = self.button.frame.size.width + padding;
+            self.textSpaceRight = self.button.frame.size.width + xPadding;
         }
         
         // Add a border on the bottom (or on the top, depending on the view's postion)
@@ -309,8 +317,8 @@ canBeDismissedByUser:(BOOL)dismissingEnabled
                                                                    0.0, // will be set later
                                                                    screenWidth,
                                                                    [[current valueForKey:@"borderHeight"] floatValue])];
-            self.borderView.backgroundColor = [UIColor colorWithHexString:[current valueForKey:@"borderColor"]
-                                                                    alpha:1.0];
+            self.borderView.backgroundColor = [UIColor colorFromHexString:[current valueForKey:@"borderColor"]
+                                                                   ];
             self.borderView.autoresizingMask = (UIViewAutoresizingFlexibleWidth);
             [self addSubview:self.borderView];
         }
@@ -366,7 +374,7 @@ canBeDismissedByUser:(BOOL)dismissingEnabled
     CGFloat padding = [self padding];
     
     self.titleLabel.frame = CGRectMake(self.textSpaceLeft,
-                                       padding,
+                                       padding + 1.0f,
                                        screenWidth - padding - self.textSpaceLeft - self.textSpaceRight,
                                        0.0);
     [self.titleLabel sizeToFit];
@@ -374,7 +382,7 @@ canBeDismissedByUser:(BOOL)dismissingEnabled
     if ([self.subtitle length])
     {
         self.contentLabel.frame = CGRectMake(self.textSpaceLeft,
-                                             self.titleLabel.frame.origin.y + self.titleLabel.frame.size.height + 5.0,
+                                             self.titleLabel.frame.origin.y + self.titleLabel.frame.size.height,
                                              screenWidth - padding - self.textSpaceLeft - self.textSpaceRight,
                                              0.0);
         [self.contentLabel sizeToFit];
