@@ -75,10 +75,11 @@ __weak static UIViewController *_defaultViewController;
                                       type:type
                                   duration:duration
                                   callback:nil
+                                    button:nil
                                buttonTitle:nil
                             buttonCallback:nil
                                 atPosition:TSMessageNotificationPositionTop
-                       canBeDismissedByUser:YES];
+                      canBeDismissedByUser:YES];
 }
 
 + (void)showNotificationInViewController:(UIViewController *)viewController
@@ -86,7 +87,7 @@ __weak static UIViewController *_defaultViewController;
                                 subtitle:(NSString *)subtitle
                                     type:(TSMessageNotificationType)type
                                 duration:(NSTimeInterval)duration
-                     canBeDismissedByUser:(BOOL)dismissingEnabled
+                    canBeDismissedByUser:(BOOL)dismissingEnabled
 {
     [self showNotificationInViewController:viewController
                                      title:title
@@ -95,10 +96,11 @@ __weak static UIViewController *_defaultViewController;
                                       type:type
                                   duration:duration
                                   callback:nil
+                                    button:nil
                                buttonTitle:nil
                             buttonCallback:nil
                                 atPosition:TSMessageNotificationPositionTop
-                       canBeDismissedByUser:dismissingEnabled];
+                      canBeDismissedByUser:dismissingEnabled];
 }
 
 + (void)showNotificationInViewController:(UIViewController *)viewController
@@ -113,6 +115,7 @@ __weak static UIViewController *_defaultViewController;
                                       type:type
                                   duration:TSMessageNotificationDurationAutomatic
                                   callback:nil
+                                    button:nil
                                buttonTitle:nil
                             buttonCallback:nil
                                 atPosition:TSMessageNotificationPositionTop
@@ -127,6 +130,7 @@ __weak static UIViewController *_defaultViewController;
                                     type:(TSMessageNotificationType)type
                                 duration:(NSTimeInterval)duration
                                 callback:(void (^)())callback
+                                  button:(UIButton *)button
                              buttonTitle:(NSString *)buttonTitle
                           buttonCallback:(void (^)())buttonCallback
                               atPosition:(TSMessageNotificationPosition)messagePosition
@@ -140,6 +144,7 @@ __weak static UIViewController *_defaultViewController;
                                                    duration:duration
                                            inViewController:viewController
                                                    callback:callback
+                                                     button:button
                                                 buttonTitle:buttonTitle
                                              buttonCallback:buttonCallback
                                                  atPosition:messagePosition

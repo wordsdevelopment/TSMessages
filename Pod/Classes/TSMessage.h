@@ -129,7 +129,7 @@ typedef NS_ENUM(NSInteger,TSMessageNotificationDuration) {
                                 subtitle:(NSString *)subtitle
                                     type:(TSMessageNotificationType)type
                                 duration:(NSTimeInterval)duration
-                     canBeDismissedByUser:(BOOL)dismissingEnabled;
+                    canBeDismissedByUser:(BOOL)dismissingEnabled;
 
 
 
@@ -141,6 +141,7 @@ typedef NS_ENUM(NSInteger,TSMessageNotificationDuration) {
  @param type The notification type (Message, Warning, Error, Success)
  @param duration The duration of the notification being displayed
  @param callback The block that should be executed, when the user tapped on the message
+ @param button a custom button that can provide additional functionality (optional)
  @param buttonTitle The title for button (optional)
  @param buttonCallback The block that should be executed, when the user tapped on the button
  @param messagePosition The position of the message on the screen
@@ -153,6 +154,7 @@ typedef NS_ENUM(NSInteger,TSMessageNotificationDuration) {
                                     type:(TSMessageNotificationType)type
                                 duration:(NSTimeInterval)duration
                                 callback:(void (^)())callback
+                                  button:(UIButton *)button
                              buttonTitle:(NSString *)buttonTitle
                           buttonCallback:(void (^)())buttonCallback
                               atPosition:(TSMessageNotificationPosition)messagePosition
