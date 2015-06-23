@@ -42,6 +42,7 @@
  @param duration The duration this notification should be displayed (optional)
  @param viewController The view controller this message should be displayed in
  @param callback The block that should be executed, when the user tapped on the message
+ @param button a custom button that can provide additional functionality (optional)
  @param buttonTitle The title for button (optional)
  @param buttonCallback The block that should be executed, when the user tapped on the button
  @param position The position of the message on the screen
@@ -54,6 +55,7 @@
            duration:(CGFloat)duration
    inViewController:(UIViewController *)viewController
            callback:(void (^)())callback
+             button:(UIButton *)button
         buttonTitle:(NSString *)buttonTitle
      buttonCallback:(void (^)())buttonCallback
          atPosition:(TSMessageNotificationPosition)position

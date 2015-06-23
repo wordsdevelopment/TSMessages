@@ -108,6 +108,7 @@ static NSMutableDictionary *_notificationDesign;
            duration:(CGFloat)duration
    inViewController:(UIViewController *)viewController
            callback:(void (^)())callback
+             button:(UIButton *)button
         buttonTitle:(NSString *)buttonTitle
      buttonCallback:(void (^)())buttonCallback
          atPosition:(TSMessageNotificationPosition)position
@@ -191,9 +192,7 @@ canBeDismissedByUser:(BOOL)dismissingEnabled
             [self addSubview:self.backgroundBlurView];
         }
         
-        UIColor *fontColor = [UIColor colorFromHexString:[current valueForKey:@"textColor"]
-                                                  ];
-        
+        UIColor *fontColor = [UIColor colorFromHexString:[current valueForKey:@"textColor"]];
         
         self.textSpaceLeft = xPadding;
         if (image) self.textSpaceLeft += image.size.width + xPadding;
@@ -261,8 +260,7 @@ canBeDismissedByUser:(BOOL)dismissingEnabled
         }
         
         // Set up button (if set)
-        _button = [UIButton buttonWithType:UIButtonTypeCustom];
-        
+        _button = (button) ? button : [UIButton buttonWithType:UIButtonTypeCustom];
         
         UIImage *buttonBackgroundImage = [UIImage imageNamed:[current valueForKey:@"buttonBackgroundImageName"]];
         
@@ -325,8 +323,7 @@ canBeDismissedByUser:(BOOL)dismissingEnabled
                                                                    0.0, // will be set later
                                                                    screenWidth,
                                                                    [[current valueForKey:@"borderHeight"] floatValue])];
-            self.borderView.backgroundColor = [UIColor colorFromHexString:[current valueForKey:@"borderColor"]
-                                                                   ];
+            self.borderView.backgroundColor = [UIColor colorFromHexString:[current valueForKey:@"borderColor"]];
             self.borderView.autoresizingMask = (UIViewAutoresizingFlexibleWidth);
             [self addSubview:self.borderView];
         }
