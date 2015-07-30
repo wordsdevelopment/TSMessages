@@ -444,9 +444,9 @@ canBeDismissedByUser:(BOOL)dismissingEnabled
     CGFloat yOffset = 0.0f;
     if (self.messagePosition == TSMessageNotificationPositionNavBarOverlay)
     {
-        // Increase height of frame to account for status bar (we subtract yPadding or top spacing appears disproportionately large)
+        // Increase height of frame to account for status bar (we subtract a small amount or top spacing appears disproportionately large)
         CGSize statusBarSize = [UIApplication sharedApplication].statusBarFrame.size;
-        yOffset = MAX(0, MIN(statusBarSize.width, statusBarSize.height)-yPadding);
+        yOffset = MAX(0, MIN(statusBarSize.width, statusBarSize.height)-7.0f);
         currentHeight += yOffset;
     }
     
