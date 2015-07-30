@@ -414,9 +414,9 @@ canBeDismissedByUser:(BOOL)dismissingEnabled
     if (self.iconImageView)
     {
         // Check if that makes the popup larger (height)
-        if (self.iconImageView.frame.origin.y + self.iconImageView.frame.size.height + yPadding > currentHeight)
+        if (self.iconImageView.frame.size.height + 2*yPadding > currentHeight)
         {
-            currentHeight = self.iconImageView.frame.origin.y + self.iconImageView.frame.size.height + yPadding;
+            currentHeight = self.iconImageView.frame.size.height + 2*yPadding;
         }
         else
         {
@@ -439,18 +439,59 @@ canBeDismissedByUser:(BOOL)dismissingEnabled
     }
     
     currentHeight += self.borderView.frame.size.height;
+
+    
+    CGFloat yOffset = 0.0f;
+    if (self.messagePosition == TSMessageNotificationPositionNavBarOverlay)
+    {
+        // Increase height of frame to account for status bar (we subtract yPadding or top spacing appears disproportionately large)
+        CGSize statusBarSize = [UIApplication sharedApplication].statusBarFrame.size;
+        yOffset = MAX(0, MIN(statusBarSize.width, statusBarSize.height)-yPadding);
+        currentHeight += yOffset;
+    }
     
     self.frame = CGRectMake(0.0, self.frame.origin.y, self.frame.size.width, currentHeight);
     
-    
+    // Reposition UI elements
     if (self.button)
     {
         self.button.frame = CGRectMake(self.frame.size.width - self.textSpaceRight,
-                                       round((self.frame.size.height / 2.0) - self.button.frame.size.height / 2.0),
+                                       round(((self.frame.size.height-yOffset) / 2.0) - self.button.frame.size.height / 2.0) + yOffset,
                                        self.button.frame.size.width,
                                        self.button.frame.size.height);
     }
     
+    if (self.titleLabel)
+    {
+        self.titleLabel.frame = CGRectMake(self.titleLabel.frame.origin.x,
+                                           self.titleLabel.frame.origin.y + yOffset,
+                                           self.titleLabel.frame.size.width,
+                                           self.titleLabel.frame.size.height);
+    }
+    
+    if (self.contentLabel)
+    {
+        self.contentLabel.frame = CGRectMake(self.contentLabel.frame.origin.x,
+                                             self.titleLabel.frame.origin.y + self.titleLabel.frame.size.height,
+                                             self.contentLabel.frame.size.width,
+                                             self.contentLabel.frame.size.height);
+    }
+    
+    if (self.iconImageView)
+    {
+        self.iconImageView.frame = CGRectMake(self.iconImageView.frame.origin.x,
+                                              round(((self.frame.size.height-yOffset) / 2.0) - self.iconImageView.frame.size.height / 2.0) + yOffset,
+                                              self.iconImageView.frame.size.width,
+                                              self.iconImageView.frame.size.height);
+    }
+    
+    if (self.borderView)
+    {
+        self.borderView.frame = CGRectMake(self.borderView.frame.origin.x,
+                                           self.borderView.frame.origin.y + yOffset,
+                                           self.borderView.frame.size.width,
+                                           self.borderView.frame.size.height);
+    }
     
     CGRect backgroundFrame = CGRectMake(self.backgroundImageView.frame.origin.x,
                                         self.backgroundImageView.frame.origin.y,
