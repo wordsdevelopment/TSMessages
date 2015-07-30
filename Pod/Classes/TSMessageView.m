@@ -352,9 +352,9 @@ canBeDismissedByUser:(BOOL)dismissingEnabled
         {
             UISwipeGestureRecognizer *gestureRec = [[UISwipeGestureRecognizer alloc] initWithTarget:self
                                                                                              action:@selector(fadeMeOut)];
-            [gestureRec setDirection:(self.messagePosition == TSMessageNotificationPositionTop ?
-                                      UISwipeGestureRecognizerDirectionUp :
-                                      UISwipeGestureRecognizerDirectionDown)];
+            [gestureRec setDirection:(self.messagePosition == TSMessageNotificationPositionBottom ?
+                                      UISwipeGestureRecognizerDirectionDown :
+                                      UISwipeGestureRecognizerDirectionUp)];
             [self addGestureRecognizer:gestureRec];
             
             UITapGestureRecognizer *tapRec = [[UITapGestureRecognizer alloc] initWithTarget:self
