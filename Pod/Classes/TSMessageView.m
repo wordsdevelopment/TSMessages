@@ -52,6 +52,7 @@ static NSMutableDictionary *_notificationDesign;
 
 @property (copy) void (^callback)();
 @property (copy) void (^buttonCallback)();
+@property (copy) void (^dismissalCallback)();
 
 - (CGFloat)updateHeightOfMessageView;
 - (void)layoutSubviews;
@@ -196,6 +197,7 @@ static NSMutableDictionary *_notificationDesign;
      buttonCallback:(void (^)())buttonCallback
          atPosition:(TSMessageNotificationPosition)position
 canBeDismissedByUser:(BOOL)dismissingEnabled
+   dismissalCallback:(void (^)())dismissalCallback
 {
     NSDictionary *notificationDesign = [TSMessageView notificationDesign];
 
@@ -209,6 +211,7 @@ canBeDismissedByUser:(BOOL)dismissingEnabled
         _messagePosition = position;
         self.callback = callback;
         self.buttonCallback = buttonCallback;
+        self.dismissalCallback = dismissalCallback;
 
         CGFloat screenWidth = self.viewController.view.bounds.size.width;
 
@@ -434,14 +437,14 @@ canBeDismissedByUser:(BOOL)dismissingEnabled
         if (dismissingEnabled)
         {
             UISwipeGestureRecognizer *gestureRec = [[UISwipeGestureRecognizer alloc] initWithTarget:self
-                                                                                             action:@selector(fadeMeOut)];
+                                                                                             action:@selector(dismiss)];
             [gestureRec setDirection:(self.messagePosition == TSMessageNotificationPositionBottom ?
                                       UISwipeGestureRecognizerDirectionDown :
                                       UISwipeGestureRecognizerDirectionUp)];
             [self addGestureRecognizer:gestureRec];
 
             UITapGestureRecognizer *tapRec = [[UITapGestureRecognizer alloc] initWithTarget:self
-                                                                                     action:@selector(fadeMeOut)];
+                                                                                     action:@selector(dismiss)];
             [self addGestureRecognizer:tapRec];
         }
 
@@ -452,6 +455,13 @@ canBeDismissedByUser:(BOOL)dismissingEnabled
         }
     }
     return self;
+}
+
+- (void)dismiss {
+    if (self.dismissalCallback) {
+        self.dismissalCallback();
+    }
+    [self fadeMeOut];
 }
 
 - (CGFloat)updateHeightOfMessageView
