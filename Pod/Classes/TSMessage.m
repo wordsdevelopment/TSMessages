@@ -78,7 +78,8 @@ __weak static UIViewController *_defaultViewController;
                                buttonTitle:nil
                             buttonCallback:nil
                                 atPosition:TSMessageNotificationPositionTop
-                      canBeDismissedByUser:YES];
+                      canBeDismissedByUser:YES
+                         dismissalCallback:nil];
 }
 
 + (void)showNotificationInViewController:(UIViewController *)viewController
@@ -99,7 +100,8 @@ __weak static UIViewController *_defaultViewController;
                                buttonTitle:nil
                             buttonCallback:nil
                                 atPosition:TSMessageNotificationPositionTop
-                      canBeDismissedByUser:dismissingEnabled];
+                      canBeDismissedByUser:dismissingEnabled
+                         dismissalCallback:nil];
 }
 
 + (void)showNotificationInViewController:(UIViewController *)viewController
@@ -118,7 +120,8 @@ __weak static UIViewController *_defaultViewController;
                                buttonTitle:nil
                             buttonCallback:nil
                                 atPosition:TSMessageNotificationPositionTop
-                      canBeDismissedByUser:YES];
+                      canBeDismissedByUser:YES
+                         dismissalCallback:nil];
 }
 
 
@@ -134,6 +137,7 @@ __weak static UIViewController *_defaultViewController;
                           buttonCallback:(void (^)())buttonCallback
                               atPosition:(TSMessageNotificationPosition)messagePosition
                     canBeDismissedByUser:(BOOL)dismissingEnabled
+                       dismissalCallback:(void (^)())dismissalCallback
 {
     // Create the TSMessageView
     TSMessageView *v = [[TSMessageView alloc] initWithTitle:title
@@ -147,7 +151,8 @@ __weak static UIViewController *_defaultViewController;
                                                 buttonTitle:buttonTitle
                                              buttonCallback:buttonCallback
                                                  atPosition:messagePosition
-                                       canBeDismissedByUser:dismissingEnabled];
+                                       canBeDismissedByUser:dismissingEnabled
+                                          dismissalCallback:dismissalCallback];
     [self prepareNotificationToBeShown:v];
 }
 

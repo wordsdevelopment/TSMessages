@@ -145,6 +145,7 @@ typedef NS_ENUM(NSInteger,TSMessageNotificationDuration) {
  @param buttonCallback The block that should be executed, when the user tapped on the button
  @param messagePosition The position of the message on the screen
  @param dismissingEnabled Should the message be dismissed when the user taps/swipes it
+ @param dismissCallback Called when the message is dismissed via tap/swipe
  */
 + (void)showNotificationInViewController:(UIViewController *)viewController
                                    title:(NSString *)title
@@ -157,7 +158,8 @@ typedef NS_ENUM(NSInteger,TSMessageNotificationDuration) {
                              buttonTitle:(NSString *)buttonTitle
                           buttonCallback:(void (^)())buttonCallback
                               atPosition:(TSMessageNotificationPosition)messagePosition
-                    canBeDismissedByUser:(BOOL)dismissingEnabled;
+                    canBeDismissedByUser:(BOOL)dismissingEnabled
+                       dismissalCallback:(void (^)())dismissalCallback;
 
 /** Fades out the currently displayed notification. If another notification is in the queue,
  the next one will be displayed automatically
