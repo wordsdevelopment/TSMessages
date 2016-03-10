@@ -137,9 +137,9 @@ static NSMutableDictionary *_notificationDesign;
             break;
     }
     NSNumber *xPaddingNumber = [self.designDictionary valueForKey:@"xPadding"];
-    CGFloat xPadding = xPaddingNumber ? [xPaddingNumber floatValue] : [self padding];
+    CGFloat xPadding = (xPaddingNumber ? [xPaddingNumber floatValue] : [self padding]) * self.pixelRatio;
     NSNumber *yPaddingNumber = [self.designDictionary valueForKey:@"yPadding"];
-    CGFloat yPadding = yPaddingNumber ? [yPaddingNumber floatValue] : [self padding];
+    CGFloat yPadding = (yPaddingNumber ? [yPaddingNumber floatValue] : [self padding]) * self.pixelRatio;
     self.iconImageView.frame = CGRectMake(xPadding,
                                           yPadding,
                                           image.size.width,
@@ -253,9 +253,9 @@ canBeDismissedByUser:(BOOL)dismissingEnabled
         self.designDictionary = current;
         
         NSNumber *xPaddingNumber = [current valueForKey:@"xPadding"];
-        CGFloat xPadding = xPaddingNumber ? [xPaddingNumber floatValue] : [self padding];
+        CGFloat xPadding = (xPaddingNumber ? [xPaddingNumber floatValue] : [self padding]) * self.pixelRatio;
         NSNumber *yPaddingNumber = [current valueForKey:@"yPadding"];
-        CGFloat yPadding = yPaddingNumber ? [yPaddingNumber floatValue] : [self padding];
+        CGFloat yPadding = (yPaddingNumber ? [yPaddingNumber floatValue] : [self padding]) * self.pixelRatio;
 
         if (!image && [[current valueForKey:@"imageName"] length])
         {
@@ -286,14 +286,14 @@ canBeDismissedByUser:(BOOL)dismissingEnabled
         UIColor *fontColor = [UIColor colorFromHexString:[current valueForKey:@"textColor"]];
         
         self.textSpaceLeft = xPadding;
-        if (image) self.textSpaceLeft += image.size.width + xPadding;
+        if (image) self.textSpaceLeft += image.size.width * self.pixelRatio + xPadding;
 
         // Set up title label
         _titleLabel = [[UILabel alloc] init];
         [self.titleLabel setText:title];
         [self.titleLabel setTextColor:fontColor];
         [self.titleLabel setBackgroundColor:[UIColor clearColor]];
-        CGFloat fontSize = [[current valueForKey:@"titleFontSize"] floatValue];
+        CGFloat fontSize = [[current valueForKey:@"titleFontSize"] floatValue] * self.pixelRatio;
         NSString *fontName = [current valueForKey:@"titleFontName"];
         if (fontName != nil) {
             [self.titleLabel setFont:[UIFont fontWithName:fontName size:fontSize]];
@@ -323,7 +323,7 @@ canBeDismissedByUser:(BOOL)dismissingEnabled
             }
             [self.contentLabel setTextColor:contentTextColor];
             [self.contentLabel setBackgroundColor:[UIColor clearColor]];
-            CGFloat fontSize = [[current valueForKey:@"contentFontSize"] floatValue];
+            CGFloat fontSize = [[current valueForKey:@"contentFontSize"] floatValue] * self.pixelRatio;
             NSString *fontName = [current valueForKey:@"contentFontName"];
             if (fontName != nil) {
                 [self.contentLabel setFont:[UIFont fontWithName:fontName size:fontSize]];
@@ -345,8 +345,8 @@ canBeDismissedByUser:(BOOL)dismissingEnabled
             _iconImageView = [[UIImageView alloc] initWithImage:image];
             self.iconImageView.frame = CGRectMake(xPadding,
                                                   yPadding,
-                                                  image.size.width,
-                                                  image.size.height);
+                                                  image.size.width * self.pixelRatio,
+                                                  image.size.height * self.pixelRatio);
             [self addSubview:self.iconImageView];
         }
 
@@ -363,7 +363,12 @@ canBeDismissedByUser:(BOOL)dismissingEnabled
         UIImage *buttonImage = [UIImage imageNamed:[current valueForKey:@"buttonImageName"]];
         if (buttonImage) {
             [self.button setImage:buttonImage forState:UIControlStateNormal];
-            self.button.frame = CGRectMake(0, 0, buttonImage.size.width, buttonImage.size.height);
+            self.button.frame = CGRectMake(0,
+                                           0,
+                                           buttonImage.size.width * self.pixelRatio,
+                                           buttonImage.size.height * self.pixelRatio);
+            self.button.contentHorizontalAlignment = UIControlContentHorizontalAlignmentFill;
+            self.button.contentVerticalAlignment = UIControlContentVerticalAlignmentFill;
         }
         UIImage *buttonHighlightedImage = [UIImage imageNamed:[current valueForKey:@"buttonImageHighlightedName"]];
         if (buttonHighlightedImage) {
@@ -388,7 +393,7 @@ canBeDismissedByUser:(BOOL)dismissingEnabled
             }
 
             [self.button setTitleColor:buttonTitleTextColor forState:UIControlStateNormal];
-            self.button.titleLabel.font = [UIFont boldSystemFontOfSize:14.0];
+            self.button.titleLabel.font = [UIFont boldSystemFontOfSize:14.0 * self.pixelRatio];
             self.button.titleLabel.shadowOffset = CGSizeMake([[current valueForKey:@"buttonTitleShadowOffsetX"] floatValue],
                                                              [[current valueForKey:@"buttonTitleShadowOffsetY"] floatValue]);
         }
@@ -412,7 +417,7 @@ canBeDismissedByUser:(BOOL)dismissingEnabled
             _borderView = [[UIView alloc] initWithFrame:CGRectMake(0.0,
                                                                    0.0, // will be set later
                                                                    screenWidth,
-                                                                   [[current valueForKey:@"borderHeight"] floatValue])];
+                                                                   [[current valueForKey:@"borderHeight"] floatValue] * self.pixelRatio)];
             self.borderView.backgroundColor = [UIColor colorFromHexString:[current valueForKey:@"borderColor"]];
             self.borderView.autoresizingMask = (UIViewAutoresizingFlexibleWidth);
             [self addSubview:self.borderView];
@@ -473,9 +478,9 @@ canBeDismissedByUser:(BOOL)dismissingEnabled
     CGFloat currentHeight;
     CGFloat screenWidth = self.viewController.view.bounds.size.width;
     NSNumber *xPaddingNumber = [self.designDictionary valueForKey:@"xPadding"];
-    CGFloat xPadding = xPaddingNumber ? [xPaddingNumber floatValue] : [self padding];
+    CGFloat xPadding = (xPaddingNumber ? [xPaddingNumber floatValue] : [self padding]) * self.pixelRatio;
     NSNumber *yPaddingNumber = [self.designDictionary valueForKey:@"yPadding"];
-    CGFloat yPadding = yPaddingNumber ? [yPaddingNumber floatValue] : [self padding];
+    CGFloat yPadding = (yPaddingNumber ? [yPaddingNumber floatValue] : [self padding]) * self.pixelRatio;
 
     self.titleLabel.frame = CGRectMake(self.textSpaceLeft,
                                        yPadding + 4.0f,
