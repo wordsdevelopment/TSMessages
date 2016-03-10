@@ -142,8 +142,8 @@ static NSMutableDictionary *_notificationDesign;
     CGFloat yPadding = (yPaddingNumber ? [yPaddingNumber floatValue] : [self padding]) * self.pixelRatio;
     self.iconImageView.frame = CGRectMake(xPadding,
                                           yPadding,
-                                          image.size.width,
-                                          image.size.height);
+                                          image.size.width * self.pixelRatio,
+                                          image.size.height * self.pixelRatio);
 }
 
 
