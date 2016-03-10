@@ -44,26 +44,31 @@ __weak static UIViewController *_defaultViewController;
 #pragma mark Public methods for setting up the notification
 
 + (void)showNotificationWithTitle:(NSString *)title
+                       pixelRatio:(CGFloat)pixelRatio
                              type:(TSMessageNotificationType)type
 {
     [self showNotificationWithTitle:title
                            subtitle:nil
+                         pixelRatio:pixelRatio
                                type:type];
 }
 
 + (void)showNotificationWithTitle:(NSString *)title
                          subtitle:(NSString *)subtitle
+                       pixelRatio:(CGFloat)pixelRatio
                              type:(TSMessageNotificationType)type
 {
     [self showNotificationInViewController:[self defaultViewController]
                                      title:title
                                   subtitle:subtitle
+                                pixelRatio:pixelRatio
                                       type:type];
 }
 
 + (void)showNotificationInViewController:(UIViewController *)viewController
                                    title:(NSString *)title
                                 subtitle:(NSString *)subtitle
+                              pixelRatio:(CGFloat)pixelRatio
                                     type:(TSMessageNotificationType)type
                                 duration:(NSTimeInterval)duration
 {
@@ -71,6 +76,7 @@ __weak static UIViewController *_defaultViewController;
                                      title:title
                                   subtitle:subtitle
                                      image:nil
+                                pixelRatio:pixelRatio
                                       type:type
                                   duration:duration
                                   callback:nil
@@ -85,6 +91,7 @@ __weak static UIViewController *_defaultViewController;
 + (void)showNotificationInViewController:(UIViewController *)viewController
                                    title:(NSString *)title
                                 subtitle:(NSString *)subtitle
+                              pixelRatio:(CGFloat)pixelRatio
                                     type:(TSMessageNotificationType)type
                                 duration:(NSTimeInterval)duration
                     canBeDismissedByUser:(BOOL)dismissingEnabled
@@ -93,6 +100,7 @@ __weak static UIViewController *_defaultViewController;
                                      title:title
                                   subtitle:subtitle
                                      image:nil
+                                pixelRatio:pixelRatio
                                       type:type
                                   duration:duration
                                   callback:nil
@@ -107,12 +115,14 @@ __weak static UIViewController *_defaultViewController;
 + (void)showNotificationInViewController:(UIViewController *)viewController
                                    title:(NSString *)title
                                 subtitle:(NSString *)subtitle
+                              pixelRatio:(CGFloat)pixelRatio
                                     type:(TSMessageNotificationType)type
 {
     [self showNotificationInViewController:viewController
                                      title:title
                                   subtitle:subtitle
                                      image:nil
+                                pixelRatio:pixelRatio
                                       type:type
                                   duration:TSMessageNotificationDurationAutomatic
                                   callback:nil
@@ -129,6 +139,7 @@ __weak static UIViewController *_defaultViewController;
                                    title:(NSString *)title
                                 subtitle:(NSString *)subtitle
                                    image:(UIImage *)image
+                              pixelRatio:(CGFloat)pixelRatio
                                     type:(TSMessageNotificationType)type
                                 duration:(NSTimeInterval)duration
                                 callback:(void (^)())callback
@@ -143,6 +154,7 @@ __weak static UIViewController *_defaultViewController;
     TSMessageView *v = [[TSMessageView alloc] initWithTitle:title
                                                    subtitle:subtitle
                                                       image:image
+                                                 pixelRatio:pixelRatio
                                                        type:type
                                                    duration:duration
                                            inViewController:viewController
