@@ -74,18 +74,22 @@ typedef NS_ENUM(NSInteger,TSMessageNotificationDuration) {
 
 /** Shows a notification message
  @param message The title of the notification view
+ @param pixelRatio The standard calculated pixel ratio for 6/+ vertical upscaling
  @param type The notification type (Message, Warning, Error, Success)
  */
 + (void)showNotificationWithTitle:(NSString *)message
+                       pixelRatio:(CGFloat)pixelRatio
                              type:(TSMessageNotificationType)type;
 
 /** Shows a notification message
  @param title The title of the notification view
  @param subtitle The text that is displayed underneath the title
+ @param pixelRatio The standard calculated pixel ratio for 6/+ vertical upscaling
  @param type The notification type (Message, Warning, Error, Success)
  */
 + (void)showNotificationWithTitle:(NSString *)title
                          subtitle:(NSString *)subtitle
+                       pixelRatio:(CGFloat)pixelRatio
                              type:(TSMessageNotificationType)type;
 
 /** Shows a notification message in a specific view controller
@@ -93,11 +97,13 @@ typedef NS_ENUM(NSInteger,TSMessageNotificationDuration) {
  You can use +setDefaultViewController: to set the the default one instead
  @param title The title of the notification view
  @param subtitle The text that is displayed underneath the title
+ @param pixelRatio The standard calculated pixel ratio for 6/+ vertical upscaling
  @param type The notification type (Message, Warning, Error, Success)
  */
 + (void)showNotificationInViewController:(UIViewController *)viewController
                                    title:(NSString *)title
                                 subtitle:(NSString *)subtitle
+                              pixelRatio:(CGFloat)pixelRatio
                                     type:(TSMessageNotificationType)type;
 
 /** Shows a notification message in a specific view controller with a specific duration
@@ -105,12 +111,14 @@ typedef NS_ENUM(NSInteger,TSMessageNotificationDuration) {
  You can use +setDefaultViewController: to set the the default one instead
  @param title The title of the notification view
  @param subtitle The text that is displayed underneath the title
+ @param pixelRatio The standard calculated pixel ratio for 6/+ vertical upscaling
  @param type The notification type (Message, Warning, Error, Success)
  @param duration The duration of the notification being displayed
  */
 + (void)showNotificationInViewController:(UIViewController *)viewController
                                    title:(NSString *)title
                                 subtitle:(NSString *)subtitle
+                              pixelRatio:(CGFloat)pixelRatio
                                     type:(TSMessageNotificationType)type
                                 duration:(NSTimeInterval)duration;
 
@@ -119,6 +127,7 @@ typedef NS_ENUM(NSInteger,TSMessageNotificationDuration) {
  You can use +setDefaultViewController: to set the the default one instead
  @param title The title of the notification view
  @param subtitle The text that is displayed underneath the title
+ @param pixelRatio The standard calculated pixel ratio for 6/+ vertical upscaling
  @param type The notification type (Message, Warning, Error, Success)
  @param duration The duration of the notification being displayed
  @param dismissingEnabled Should the message be dismissed when the user taps/swipes it
@@ -126,6 +135,7 @@ typedef NS_ENUM(NSInteger,TSMessageNotificationDuration) {
 + (void)showNotificationInViewController:(UIViewController *)viewController
                                    title:(NSString *)title
                                 subtitle:(NSString *)subtitle
+                              pixelRatio:(CGFloat)pixelRatio
                                     type:(TSMessageNotificationType)type
                                 duration:(NSTimeInterval)duration
                     canBeDismissedByUser:(BOOL)dismissingEnabled;
@@ -137,6 +147,7 @@ typedef NS_ENUM(NSInteger,TSMessageNotificationDuration) {
  @param title The title of the notification view
  @param subtitle The message that is displayed underneath the title (optional)
  @param image A custom icon image (optional)
+ @param pixelRatio The standard calculated pixel ratio for 6/+ vertical upscaling
  @param type The notification type (Message, Warning, Error, Success)
  @param duration The duration of the notification being displayed
  @param callback The block that should be executed, when the user tapped on the message
@@ -151,6 +162,7 @@ typedef NS_ENUM(NSInteger,TSMessageNotificationDuration) {
                                    title:(NSString *)title
                                 subtitle:(NSString *)subtitle
                                    image:(UIImage *)image
+                              pixelRatio:(CGFloat)pixelRatio
                                     type:(TSMessageNotificationType)type
                                 duration:(NSTimeInterval)duration
                                 callback:(void (^)())callback

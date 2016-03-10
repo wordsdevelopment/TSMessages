@@ -50,6 +50,7 @@
  @param title The title of the notification view
  @param subtitle The subtitle of the notification view (optional)
  @param image A custom icon image (optional)
+ @param pixelRatio The standard calculated pixel ratio for 6/+ vertical upscaling
  @param notificationType The type (color) of the notification view
  @param duration The duration this notification should be displayed (optional)
  @param viewController The view controller this message should be displayed in
@@ -63,6 +64,7 @@
 - (id)initWithTitle:(NSString *)title
            subtitle:(NSString *)subtitle
               image:(UIImage *)image
+         pixelRatio:(CGFloat)pixelRatio
                type:(TSMessageNotificationType)notificationType
            duration:(CGFloat)duration
    inViewController:(UIViewController *)viewController

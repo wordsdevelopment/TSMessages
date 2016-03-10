@@ -50,6 +50,8 @@ static NSMutableDictionary *_notificationDesign;
 @property (nonatomic, assign) CGFloat textSpaceLeft;
 @property (nonatomic, assign) CGFloat textSpaceRight;
 
+@property (nonatomic, assign) CGFloat pixelRatio;
+
 @property (copy) void (^callback)();
 @property (copy) void (^buttonCallback)();
 @property (copy) void (^dismissalCallback)();
@@ -188,6 +190,7 @@ static NSMutableDictionary *_notificationDesign;
 - (id)initWithTitle:(NSString *)title
            subtitle:(NSString *)subtitle
               image:(UIImage *)image
+         pixelRatio:(CGFloat)pixelRatio
                type:(TSMessageNotificationType)aNotificationType
            duration:(CGFloat)duration
    inViewController:(UIViewController *)viewController
@@ -209,6 +212,7 @@ canBeDismissedByUser:(BOOL)dismissingEnabled
         _duration = duration;
         _viewController = viewController;
         _messagePosition = position;
+        _pixelRatio = pixelRatio;
         self.callback = callback;
         self.buttonCallback = buttonCallback;
         self.dismissalCallback = dismissalCallback;
