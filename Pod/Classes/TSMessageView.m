@@ -43,6 +43,7 @@ static NSMutableDictionary *_notificationDesign;
 @property (nonatomic, strong) UILabel *contentLabel;
 @property (nonatomic, strong) UIImageView *iconImageView;
 @property (nonatomic, strong) UIButton *button;
+@property (nonatomic, strong) UILabel *ctaLabel;
 @property (nonatomic, strong) UIView *borderView;
 @property (nonatomic, strong) UIImageView *backgroundImageView;
 @property (nonatomic, strong) TSBlurView *backgroundBlurView; // Only used in iOS 7
@@ -80,7 +81,7 @@ static NSMutableDictionary *_notificationDesign;
     [self.titleLabel setFont:_titleFont];
 }
 
--(void)setTitleTextColor:(UIColor *)aTextColor{
+-(void) setTitleTextColor:(UIColor *)aTextColor{
     _titleTextColor = aTextColor;
     [self.titleLabel setTextColor:_titleTextColor];
 }
@@ -189,6 +190,7 @@ static NSMutableDictionary *_notificationDesign;
 
 - (id)initWithTitle:(NSString *)title
            subtitle:(NSString *)subtitle
+           ctaTitle:(NSString *)ctaTitle
               image:(UIImage *)image
          pixelRatio:(CGFloat)pixelRatio
                type:(TSMessageNotificationType)aNotificationType
@@ -303,10 +305,11 @@ canBeDismissedByUser:(BOOL)dismissingEnabled
         [self.titleLabel setShadowColor:[UIColor colorFromHexString:[current valueForKey:@"shadowColor"]]];
         [self.titleLabel setShadowOffset:CGSizeMake([[current valueForKey:@"shadowOffsetX"] floatValue],
                                                     [[current valueForKey:@"shadowOffsetY"] floatValue])];
+        self.titleLabel.minimumScaleFactor = 0.75;
+        self.titleLabel.adjustsFontSizeToFitWidth = YES;
         
-        int64_t titleNumberOfLines = [[current valueForKey:@"titleNumberOfLines"] intValue];
-        self.titleLabel.numberOfLines = titleNumberOfLines;
-        self.titleLabel.lineBreakMode = [[current valueForKey:@"lineBreakMode"] intValue];
+        self.titleLabel.numberOfLines = 1;
+        self.titleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
 
         [self addSubview:self.titleLabel];
 
@@ -335,7 +338,7 @@ canBeDismissedByUser:(BOOL)dismissingEnabled
             
             int64_t contentNumberOfLines = [[current valueForKey:@"contentNumberOfLines"] intValue];
             self.contentLabel.numberOfLines = contentNumberOfLines;
-            self.contentLabel.lineBreakMode = self.titleLabel.lineBreakMode;
+            self.contentLabel.lineBreakMode = [[current valueForKey:@"lineBreakMode"] intValue];;
 
             [self addSubview:self.contentLabel];
         }
@@ -409,7 +412,37 @@ canBeDismissedByUser:(BOOL)dismissingEnabled
         
         [self addSubview:self.button];
         
+        if (ctaTitle.length > 0) {
+            UIColor *ctaColor = [UIColor colorFromHexString:[current valueForKey:@"ctaTitleColor"]];
+            self.ctaLabel = [[UILabel alloc] init];
+            self.ctaLabel.text = ctaTitle;
+            self.ctaLabel.textColor = ctaColor;
+            self.ctaLabel.layer.borderWidth = 1.0f * pixelRatio;
+            self.ctaLabel.layer.borderColor = ctaColor.CGColor;
+            self.ctaLabel.layer.cornerRadius = 5.0f * pixelRatio;
+            self.ctaLabel.clipsToBounds = YES;
+            self.ctaLabel.backgroundColor = [UIColor clearColor];
+            CGFloat fontSize = [[current valueForKey:@"ctaTitleFontSize"] floatValue] * pixelRatio;
+            NSString *fontName = [current valueForKey:@"ctaTitleFontName"];
+            if (fontName != nil) {
+                [self.ctaLabel setFont:[UIFont fontWithName:fontName size:fontSize]];
+            } else {
+                [self.ctaLabel setFont:[UIFont boldSystemFontOfSize:fontSize]];
+            }
+            self.ctaLabel.numberOfLines = 1;
+            self.ctaLabel.textAlignment = NSTextAlignmentCenter;
+            [self.ctaLabel sizeToFit];
+            CGRect ctaFrame = self.ctaLabel.frame;
+            ctaFrame.size.width += [[current valueForKey:@"ctaTitleXPadding"] floatValue];
+            ctaFrame.size.height += [[current valueForKey:@"ctaTitleYPadding"] floatValue];
+            self.ctaLabel.frame = ctaFrame;
+            [self addSubview:self.ctaLabel];
+        }
+        
         self.textSpaceRight = self.button.frame.size.width + xPadding;
+        if (self.ctaLabel) {
+            self.textSpaceRight = self.textSpaceRight + self.ctaLabel.frame.size.width + xPadding;
+        }
         
         // Add a border on the bottom (or on the top, depending on the view's postion)
         if (![TSMessage iOS7StyleEnabled])
@@ -559,6 +592,16 @@ canBeDismissedByUser:(BOOL)dismissingEnabled
                                        round(((self.frame.size.height-yOffset) / 2.0) - self.button.frame.size.height / 2.0) + yOffset,
                                        self.button.frame.size.width,
                                        self.button.frame.size.height);
+    }
+    if (self.ctaLabel) {
+        self.button.frame = CGRectMake(self.button.frame.origin.x + self.ctaLabel.frame.size.width + xPadding,
+                                       self.button.frame.origin.y,
+                                       self.button.frame.size.width,
+                                       self.button.frame.size.height);
+        self.ctaLabel.frame = CGRectMake(self.frame.size.width - self.textSpaceRight,
+                                       round(((self.frame.size.height - yOffset) / 2.0) - self.ctaLabel.frame.size.height / 2.0) + yOffset,
+                                       self.ctaLabel.frame.size.width,
+                                       self.ctaLabel.frame.size.height);
     }
     
     if (self.titleLabel)

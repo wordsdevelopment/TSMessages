@@ -161,6 +161,7 @@ typedef NS_ENUM(NSInteger,TSMessageNotificationDuration) {
 + (void)showNotificationInViewController:(UIViewController *)viewController
                                    title:(NSString *)title
                                 subtitle:(NSString *)subtitle
+                                ctaTitle:(NSString *)ctaTitle
                                    image:(UIImage *)image
                               pixelRatio:(CGFloat)pixelRatio
                                     type:(TSMessageNotificationType)type

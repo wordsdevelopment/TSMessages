@@ -63,6 +63,7 @@
  */
 - (id)initWithTitle:(NSString *)title
            subtitle:(NSString *)subtitle
+           ctaTitle:(NSString *)ctaTitle
               image:(UIImage *)image
          pixelRatio:(CGFloat)pixelRatio
                type:(TSMessageNotificationType)notificationType

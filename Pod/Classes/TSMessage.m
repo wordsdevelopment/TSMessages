@@ -75,6 +75,7 @@ __weak static UIViewController *_defaultViewController;
     [self showNotificationInViewController:viewController
                                      title:title
                                   subtitle:subtitle
+                                  ctaTitle:nil
                                      image:nil
                                 pixelRatio:pixelRatio
                                       type:type
@@ -99,6 +100,7 @@ __weak static UIViewController *_defaultViewController;
     [self showNotificationInViewController:viewController
                                      title:title
                                   subtitle:subtitle
+                                  ctaTitle:nil
                                      image:nil
                                 pixelRatio:pixelRatio
                                       type:type
@@ -121,6 +123,7 @@ __weak static UIViewController *_defaultViewController;
     [self showNotificationInViewController:viewController
                                      title:title
                                   subtitle:subtitle
+                                  ctaTitle:nil
                                      image:nil
                                 pixelRatio:pixelRatio
                                       type:type
@@ -138,6 +141,7 @@ __weak static UIViewController *_defaultViewController;
 + (void)showNotificationInViewController:(UIViewController *)viewController
                                    title:(NSString *)title
                                 subtitle:(NSString *)subtitle
+                                ctaTitle:(NSString *)ctaTitle
                                    image:(UIImage *)image
                               pixelRatio:(CGFloat)pixelRatio
                                     type:(TSMessageNotificationType)type
@@ -153,6 +157,7 @@ __weak static UIViewController *_defaultViewController;
     // Create the TSMessageView
     TSMessageView *v = [[TSMessageView alloc] initWithTitle:title
                                                    subtitle:subtitle
+                                                   ctaTitle:ctaTitle
                                                       image:image
                                                  pixelRatio:pixelRatio
                                                        type:type
