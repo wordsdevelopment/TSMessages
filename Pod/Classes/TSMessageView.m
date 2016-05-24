@@ -81,7 +81,7 @@ static NSMutableDictionary *_notificationDesign;
     [self.titleLabel setFont:_titleFont];
 }
 
--(void) setTitleTextColor:(UIColor *)aTextColor{
+-(void)setTitleTextColor:(UIColor *)aTextColor{
     _titleTextColor = aTextColor;
     [self.titleLabel setTextColor:_titleTextColor];
 }
@@ -433,8 +433,8 @@ canBeDismissedByUser:(BOOL)dismissingEnabled
             self.ctaLabel.textAlignment = NSTextAlignmentCenter;
             [self.ctaLabel sizeToFit];
             CGRect ctaFrame = self.ctaLabel.frame;
-            ctaFrame.size.width += [[current valueForKey:@"ctaTitleXPadding"] floatValue];
-            ctaFrame.size.height += [[current valueForKey:@"ctaTitleYPadding"] floatValue];
+            ctaFrame.size.width += [[current valueForKey:@"ctaTitleXPadding"] floatValue] * pixelRatio;
+            ctaFrame.size.height += [[current valueForKey:@"ctaTitleYPadding"] floatValue] * pixelRatio;
             self.ctaLabel.frame = ctaFrame;
             [self addSubview:self.ctaLabel];
         }
