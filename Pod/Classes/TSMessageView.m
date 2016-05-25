@@ -594,10 +594,13 @@ canBeDismissedByUser:(BOOL)dismissingEnabled
                                        self.button.frame.size.height);
     }
     if (self.ctaLabel) {
-        self.button.frame = CGRectMake(self.button.frame.origin.x + self.ctaLabel.frame.size.width + xPadding,
-                                       self.button.frame.origin.y,
-                                       self.button.frame.size.width,
-                                       self.button.frame.size.height);
+        if (self.button) {
+            self.button.frame = CGRectMake(self.button.frame.origin.x + self.ctaLabel.frame.size.width + xPadding,
+                                           self.button.frame.origin.y,
+                                           self.button.frame.size.width,
+                                           self.button.frame.size.height);
+        }
+
         self.ctaLabel.frame = CGRectMake(self.frame.size.width - self.textSpaceRight,
                                        round(((self.frame.size.height - yOffset) / 2.0) - self.ctaLabel.frame.size.height / 2.0) + yOffset,
                                        self.ctaLabel.frame.size.width,
