@@ -167,7 +167,7 @@ static NSMutableDictionary *_notificationDesign;
 
 + (void)addNotificationDesignFromFile:(NSString *)filename
 {
-    NSString *path = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:filename];
+    NSString *path = [[[NSBundle bundleForClass:self.class] resourcePath] stringByAppendingPathComponent:filename];
     if ([[NSFileManager defaultManager] fileExistsAtPath:path])
     {
         NSDictionary *design = [NSJSONSerialization JSONObjectWithData:[NSData dataWithContentsOfFile:path]
@@ -261,7 +261,7 @@ canBeDismissedByUser:(BOOL)dismissingEnabled
 
         if (!image && [[current valueForKey:@"imageName"] length])
         {
-            image = [UIImage imageNamed:[current valueForKey:@"imageName"]];
+            image = [W3Image imageNamed:[current valueForKey:@"imageName"]];
         }
 
         if (![TSMessage iOS7StyleEnabled])
@@ -269,7 +269,7 @@ canBeDismissedByUser:(BOOL)dismissingEnabled
             self.alpha = 0.0;
 
             // add background image here
-            UIImage *backgroundImage = [UIImage imageNamed:[current valueForKey:@"backgroundImageName"]];
+            UIImage *backgroundImage = [W3Image imageNamed:[current valueForKey:@"backgroundImageName"]];
             backgroundImage = [backgroundImage stretchableImageWithLeftCapWidth:0.0 topCapHeight:0.0];
 
             _backgroundImageView = [[UIImageView alloc] initWithImage:backgroundImage];
@@ -356,14 +356,14 @@ canBeDismissedByUser:(BOOL)dismissingEnabled
         // Set up button (if set)
         _button = (button) ? button : [UIButton buttonWithType:UIButtonTypeCustom];
         
-        UIImage *buttonBackgroundImage = [UIImage imageNamed:[current valueForKey:@"buttonBackgroundImageName"]];
+        UIImage *buttonBackgroundImage = [W3Image imageNamed:[current valueForKey:@"buttonBackgroundImageName"]];
         
         if (buttonBackgroundImage) {
             buttonBackgroundImage = [buttonBackgroundImage resizableImageWithCapInsets:UIEdgeInsetsMake(15.0, 12.0, 15.0, 11.0)];
             [self.button setBackgroundImage:buttonBackgroundImage forState:UIControlStateNormal];
         }
         
-        UIImage *buttonImage = [UIImage imageNamed:[current valueForKey:@"buttonImageName"]];
+        UIImage *buttonImage = [W3Image imageNamed:[current valueForKey:@"buttonImageName"]];
         if (buttonImage) {
             [self.button setImage:buttonImage forState:UIControlStateNormal];
             self.button.frame = CGRectMake(0,
@@ -373,7 +373,7 @@ canBeDismissedByUser:(BOOL)dismissingEnabled
             self.button.contentHorizontalAlignment = UIControlContentHorizontalAlignmentFill;
             self.button.contentVerticalAlignment = UIControlContentVerticalAlignmentFill;
         }
-        UIImage *buttonHighlightedImage = [UIImage imageNamed:[current valueForKey:@"buttonImageHighlightedName"]];
+        UIImage *buttonHighlightedImage = [W3Image imageNamed:[current valueForKey:@"buttonImageHighlightedName"]];
         if (buttonHighlightedImage) {
             [self.button setImage:buttonHighlightedImage forState:UIControlStateHighlighted];
         }
