@@ -173,6 +173,40 @@ __weak static UIViewController *_defaultViewController;
     [self prepareNotificationToBeShown:v];
 }
 
++ (void)showNotificationInViewController:(UIViewController *)viewController
+                                   title:(NSString *)title
+                            subtitleView:(UIView *)subtitleView
+                                ctaTitle:(NSString *)ctaTitle
+                                   image:(UIImage *)image
+                              pixelRatio:(CGFloat)pixelRatio
+                                    type:(TSMessageNotificationType)type
+                                duration:(NSTimeInterval)duration
+                                callback:(void (^)())callback
+                                  button:(UIButton *)button
+                             buttonTitle:(NSString *)buttonTitle
+                          buttonCallback:(void (^)())buttonCallback
+                              atPosition:(TSMessageNotificationPosition)messagePosition
+                    canBeDismissedByUser:(BOOL)dismissingEnabled
+                       dismissalCallback:(void (^)())dismissalCallback {
+    // Create the TSMessageView
+    TSMessageView *v = [[TSMessageView alloc] initWithTitle:title
+                                                   subtitleView:subtitleView
+                                                   ctaTitle:ctaTitle
+                                                      image:image
+                                                 pixelRatio:pixelRatio
+                                                       type:type
+                                                   duration:duration
+                                           inViewController:viewController
+                                                   callback:callback
+                                                     button:button
+                                                buttonTitle:buttonTitle
+                                             buttonCallback:buttonCallback
+                                                 atPosition:messagePosition
+                                       canBeDismissedByUser:dismissingEnabled
+                                          dismissalCallback:dismissalCallback];
+    [self prepareNotificationToBeShown:v];
+}
+
 
 + (void)prepareNotificationToBeShown:(TSMessageView *)messageView
 {

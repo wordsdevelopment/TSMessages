@@ -145,6 +145,38 @@ typedef NS_ENUM(NSInteger,TSMessageNotificationDuration) {
 /** Shows a notification message in a specific view controller
  @param viewController The view controller to show the notification in.
  @param title The title of the notification view
+ @param subtitleView A custom view that is displayed underneath the title (optional)
+ @param image A custom icon image (optional)
+ @param pixelRatio The standard calculated pixel ratio for 6/+ vertical upscaling
+ @param type The notification type (Message, Warning, Error, Success)
+ @param duration The duration of the notification being displayed
+ @param callback The block that should be executed, when the user tapped on the message
+ @param button a custom button that can provide additional functionality (optional)
+ @param buttonTitle The title for button (optional)
+ @param buttonCallback The block that should be executed, when the user tapped on the button
+ @param messagePosition The position of the message on the screen
+ @param dismissingEnabled Should the message be dismissed when the user taps/swipes it
+ @param dismissCallback Called when the message is dismissed via tap/swipe
+ */
++ (void)showNotificationInViewController:(UIViewController *)viewController
+                                   title:(NSString *)title
+                                subtitleView:(UIView *)subtitleView
+                                ctaTitle:(NSString *)ctaTitle
+                                   image:(UIImage *)image
+                              pixelRatio:(CGFloat)pixelRatio
+                                    type:(TSMessageNotificationType)type
+                                duration:(NSTimeInterval)duration
+                                callback:(void (^)())callback
+                                  button:(UIButton *)button
+                             buttonTitle:(NSString *)buttonTitle
+                          buttonCallback:(void (^)())buttonCallback
+                              atPosition:(TSMessageNotificationPosition)messagePosition
+                    canBeDismissedByUser:(BOOL)dismissingEnabled
+                       dismissalCallback:(void (^)())dismissalCallback;
+
+/** Shows a notification message in a specific view controller
+ @param viewController The view controller to show the notification in.
+ @param title The title of the notification view
  @param subtitle The message that is displayed underneath the title (optional)
  @param image A custom icon image (optional)
  @param pixelRatio The standard calculated pixel ratio for 6/+ vertical upscaling
