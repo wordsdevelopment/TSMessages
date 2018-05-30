@@ -663,7 +663,12 @@ canBeDismissedByUser:(BOOL)dismissingEnabled
         currentHeight += yOffset;
     }
     
-    self.frame = CGRectMake(0.0, self.frame.origin.y, self.frame.size.width, currentHeight);
+    // On orientation change, message remains being presented at the top edge of the view
+    if (self.frame.origin.y > 0) {
+        self.frame = CGRectMake(0.0, 0.0, self.frame.size.width, currentHeight);
+    } else {
+        self.frame = CGRectMake(0.0, self.frame.origin.y, self.frame.size.width, currentHeight);
+    }
     
     // Reposition UI elements
     if (self.button)
