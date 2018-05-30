@@ -500,7 +500,12 @@ canBeDismissedByUser:(BOOL)dismissingEnabled
 
     currentHeight += self.borderView.frame.size.height;
 
-    self.frame = CGRectMake(0.0, self.frame.origin.y, self.frame.size.width, currentHeight);
+    // On orientation change, message remains being presented at the top edge of the view
+    if (self.frame.origin.y > 0) {
+        self.frame = CGRectMake(0.0, 0.0, self.frame.size.width, currentHeight);
+    } else {
+        self.frame = CGRectMake(0.0, self.frame.origin.y, self.frame.size.width, currentHeight);
+    }
 
 
     if (self.button)
