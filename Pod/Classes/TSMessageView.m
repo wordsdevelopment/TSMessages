@@ -29,6 +29,9 @@ static NSMutableDictionary *_notificationDesign;
 /** The displayed subtitle of this message view */
 @property (nonatomic, strong) NSString *subtitle;
 
+/** The view to displayed content under the title of this message. If not nil the subtitle string will be ignored */
+@property (nonatomic, strong) UIView *subtitleView;
+
 /** The title of the added button */
 @property (nonatomic, strong) NSString *buttonTitle;
 
@@ -43,6 +46,7 @@ static NSMutableDictionary *_notificationDesign;
 @property (nonatomic, strong) UILabel *contentLabel;
 @property (nonatomic, strong) UIImageView *iconImageView;
 @property (nonatomic, strong) UIButton *button;
+@property (nonatomic, strong) UILabel *ctaLabel;
 @property (nonatomic, strong) UIView *borderView;
 @property (nonatomic, strong) UIImageView *backgroundImageView;
 @property (nonatomic, strong) TSBlurView *backgroundBlurView; // Only used in iOS 7
@@ -189,6 +193,8 @@ static NSMutableDictionary *_notificationDesign;
 
 - (id)initWithTitle:(NSString *)title
            subtitle:(NSString *)subtitle
+       subtitleView:(UIView *)subtitleView
+           ctaTitle:(NSString *)ctaTitle
               image:(UIImage *)image
          pixelRatio:(CGFloat)pixelRatio
                type:(TSMessageNotificationType)aNotificationType
@@ -208,6 +214,7 @@ canBeDismissedByUser:(BOOL)dismissingEnabled
     {
         _title = title;
         _subtitle = subtitle;
+        _subtitleView = subtitleView;
         _buttonTitle = buttonTitle;
         _duration = duration;
         _viewController = viewController;
@@ -303,15 +310,19 @@ canBeDismissedByUser:(BOOL)dismissingEnabled
         [self.titleLabel setShadowColor:[UIColor colorFromHexString:[current valueForKey:@"shadowColor"]]];
         [self.titleLabel setShadowOffset:CGSizeMake([[current valueForKey:@"shadowOffsetX"] floatValue],
                                                     [[current valueForKey:@"shadowOffsetY"] floatValue])];
+        self.titleLabel.minimumScaleFactor = 0.75;
+        self.titleLabel.adjustsFontSizeToFitWidth = YES;
         
-        int64_t titleNumberOfLines = [[current valueForKey:@"titleNumberOfLines"] intValue];
-        self.titleLabel.numberOfLines = titleNumberOfLines;
-        self.titleLabel.lineBreakMode = [[current valueForKey:@"lineBreakMode"] intValue];
+        self.titleLabel.numberOfLines = 1;
+        self.titleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
 
         [self addSubview:self.titleLabel];
 
+        if (self.subtitleView != nil) {
+            [self addSubview:self.subtitleView];
+        }
         // Set up content label (if set)
-        if ([subtitle length])
+        else if ([subtitle length])
         {
             _contentLabel = [[UILabel alloc] init];
             [self.contentLabel setText:subtitle];
@@ -335,7 +346,7 @@ canBeDismissedByUser:(BOOL)dismissingEnabled
             
             int64_t contentNumberOfLines = [[current valueForKey:@"contentNumberOfLines"] intValue];
             self.contentLabel.numberOfLines = contentNumberOfLines;
-            self.contentLabel.lineBreakMode = self.titleLabel.lineBreakMode;
+            self.contentLabel.lineBreakMode = [[current valueForKey:@"lineBreakMode"] intValue];;
 
             [self addSubview:self.contentLabel];
         }
@@ -409,7 +420,37 @@ canBeDismissedByUser:(BOOL)dismissingEnabled
         
         [self addSubview:self.button];
         
+        if (ctaTitle.length > 0) {
+            UIColor *ctaColor = [UIColor colorFromHexString:[current valueForKey:@"ctaTitleColor"]];
+            self.ctaLabel = [[UILabel alloc] init];
+            self.ctaLabel.text = ctaTitle;
+            self.ctaLabel.textColor = ctaColor;
+            self.ctaLabel.layer.borderWidth = 1.0f * pixelRatio;
+            self.ctaLabel.layer.borderColor = ctaColor.CGColor;
+            self.ctaLabel.layer.cornerRadius = 5.0f * pixelRatio;
+            self.ctaLabel.clipsToBounds = YES;
+            self.ctaLabel.backgroundColor = [UIColor clearColor];
+            CGFloat fontSize = [[current valueForKey:@"ctaTitleFontSize"] floatValue] * pixelRatio;
+            NSString *fontName = [current valueForKey:@"ctaTitleFontName"];
+            if (fontName != nil) {
+                [self.ctaLabel setFont:[UIFont fontWithName:fontName size:fontSize]];
+            } else {
+                [self.ctaLabel setFont:[UIFont boldSystemFontOfSize:fontSize]];
+            }
+            self.ctaLabel.numberOfLines = 1;
+            self.ctaLabel.textAlignment = NSTextAlignmentCenter;
+            [self.ctaLabel sizeToFit];
+            CGRect ctaFrame = self.ctaLabel.frame;
+            ctaFrame.size.width += [[current valueForKey:@"ctaTitleXPadding"] floatValue] * pixelRatio;
+            ctaFrame.size.height += [[current valueForKey:@"ctaTitleYPadding"] floatValue] * pixelRatio;
+            self.ctaLabel.frame = ctaFrame;
+            [self addSubview:self.ctaLabel];
+        }
+        
         self.textSpaceRight = self.button.frame.size.width + xPadding;
+        if (self.ctaLabel) {
+            self.textSpaceRight = self.textSpaceRight + self.ctaLabel.frame.size.width + xPadding;
+        }
         
         // Add a border on the bottom (or on the top, depending on the view's postion)
         if (![TSMessage iOS7StyleEnabled])
@@ -466,6 +507,72 @@ canBeDismissedByUser:(BOOL)dismissingEnabled
     return self;
 }
 
+- (id)initWithTitle:(NSString *)title
+           subtitle:(NSString *)subtitle
+           ctaTitle:(NSString *)ctaTitle
+              image:(UIImage *)image
+         pixelRatio:(CGFloat)pixelRatio
+               type:(TSMessageNotificationType)notificationType
+           duration:(CGFloat)duration
+   inViewController:(UIViewController *)viewController
+           callback:(void (^)())callback
+             button:(UIButton *)button
+        buttonTitle:(NSString *)buttonTitle
+     buttonCallback:(void (^)())buttonCallback
+         atPosition:(TSMessageNotificationPosition)position
+canBeDismissedByUser:(BOOL)dismissingEnabled
+  dismissalCallback:(void (^)())dismissalCallback {
+    return [[TSMessageView alloc] initWithTitle:title
+                                       subtitle:subtitle
+                                   subtitleView:nil
+                                       ctaTitle:ctaTitle
+                                          image:image
+                                     pixelRatio:pixelRatio
+                                           type:notificationType
+                                       duration:duration
+                               inViewController:viewController
+                                       callback:callback
+                                         button:button
+                                    buttonTitle:buttonTitle
+                                 buttonCallback:buttonCallback
+                                     atPosition:position
+                           canBeDismissedByUser:dismissingEnabled
+                              dismissalCallback:dismissalCallback];
+}
+
+- (id)initWithTitle:(NSString *)title
+       subtitleView:(UIView *)subtitleView
+           ctaTitle:(NSString *)ctaTitle
+              image:(UIImage *)image
+         pixelRatio:(CGFloat)pixelRatio
+               type:(TSMessageNotificationType)notificationType
+           duration:(CGFloat)duration
+   inViewController:(UIViewController *)viewController
+           callback:(void (^)())callback
+             button:(UIButton *)button
+        buttonTitle:(NSString *)buttonTitle
+     buttonCallback:(void (^)())buttonCallback
+         atPosition:(TSMessageNotificationPosition)position
+canBeDismissedByUser:(BOOL)dismissingEnabled
+  dismissalCallback:(void (^)())dismissalCallback {
+    return [[TSMessageView alloc] initWithTitle:title
+                                       subtitle:nil
+                                   subtitleView:subtitleView
+                                       ctaTitle:ctaTitle
+                                          image:image
+                                     pixelRatio:pixelRatio
+                                           type:notificationType
+                                       duration:duration
+                               inViewController:viewController
+                                       callback:callback
+                                         button:button
+                                    buttonTitle:buttonTitle
+                                 buttonCallback:buttonCallback
+                                     atPosition:position
+                           canBeDismissedByUser:dismissingEnabled
+                              dismissalCallback:dismissalCallback];
+}
+
 - (void)dismiss {
     if (self.dismissalCallback) {
         self.dismissalCallback();
@@ -491,8 +598,14 @@ canBeDismissedByUser:(BOOL)dismissingEnabled
     newTitleFrame.size.width = screenWidth - xPadding - self.textSpaceLeft - self.textSpaceRight;
     self.titleLabel.frame = newTitleFrame;
     
-    if ([self.subtitle length])
-    {
+    if (self.subtitleView != nil) {
+        self.subtitleView.frame = CGRectMake(self.textSpaceLeft,
+                                             self.titleLabel.frame.origin.y + self.titleLabel.frame.size.height,
+                                             screenWidth - xPadding - self.textSpaceLeft - self.textSpaceRight,
+                                             self.subtitleView.frame.size.height);
+        
+        currentHeight = self.subtitleView.frame.origin.y + self.subtitleView.frame.size.height;
+    } else if ([self.subtitle length]) {
         self.contentLabel.frame = CGRectMake(self.textSpaceLeft,
                                              self.titleLabel.frame.origin.y + self.titleLabel.frame.size.height,
                                              screenWidth - xPadding - self.textSpaceLeft - self.textSpaceRight,
@@ -550,7 +663,12 @@ canBeDismissedByUser:(BOOL)dismissingEnabled
         currentHeight += yOffset;
     }
     
-    self.frame = CGRectMake(0.0, self.frame.origin.y, self.frame.size.width, currentHeight);
+    // On orientation change, message remains being presented at the top edge of the view
+    if (self.frame.origin.y > 0) {
+        self.frame = CGRectMake(0.0, 0.0, self.frame.size.width, currentHeight);
+    } else {
+        self.frame = CGRectMake(0.0, self.frame.origin.y, self.frame.size.width, currentHeight);
+    }
     
     // Reposition UI elements
     if (self.button)
@@ -559,6 +677,19 @@ canBeDismissedByUser:(BOOL)dismissingEnabled
                                        round(((self.frame.size.height-yOffset) / 2.0) - self.button.frame.size.height / 2.0) + yOffset,
                                        self.button.frame.size.width,
                                        self.button.frame.size.height);
+    }
+    if (self.ctaLabel) {
+        if (self.button) {
+            self.button.frame = CGRectMake(self.button.frame.origin.x + self.ctaLabel.frame.size.width + xPadding,
+                                           self.button.frame.origin.y,
+                                           self.button.frame.size.width,
+                                           self.button.frame.size.height);
+        }
+
+        self.ctaLabel.frame = CGRectMake(self.frame.size.width - self.textSpaceRight,
+                                       round(((self.frame.size.height - yOffset) / 2.0) - self.ctaLabel.frame.size.height / 2.0) + yOffset,
+                                       self.ctaLabel.frame.size.width,
+                                       self.ctaLabel.frame.size.height);
     }
     
     if (self.titleLabel)
@@ -569,8 +700,12 @@ canBeDismissedByUser:(BOOL)dismissingEnabled
                                            self.titleLabel.frame.size.height);
     }
     
-    if (self.contentLabel)
-    {
+    if (self.subtitleView) {
+        self.subtitleView.frame = CGRectMake(self.subtitleView.frame.origin.x,
+                                             self.titleLabel.frame.origin.y + self.titleLabel.frame.size.height,
+                                             self.subtitleView.frame.size.width,
+                                             self.subtitleView.frame.size.height);
+    } else if (self.contentLabel) {
         self.contentLabel.frame = CGRectMake(self.contentLabel.frame.origin.x,
                                              self.titleLabel.frame.origin.y + self.titleLabel.frame.size.height,
                                              self.contentLabel.frame.size.width,

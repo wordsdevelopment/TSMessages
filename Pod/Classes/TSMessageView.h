@@ -63,6 +63,7 @@
  */
 - (id)initWithTitle:(NSString *)title
            subtitle:(NSString *)subtitle
+           ctaTitle:(NSString *)ctaTitle
               image:(UIImage *)image
          pixelRatio:(CGFloat)pixelRatio
                type:(TSMessageNotificationType)notificationType
@@ -75,6 +76,37 @@
          atPosition:(TSMessageNotificationPosition)position
 canBeDismissedByUser:(BOOL)dismissingEnabled
    dismissalCallback:(void (^)())dismissalCallback;
+
+/** Inits the notification view. Do not call this from outside this library.
+ @param title The title of the notification view
+ @param subtitleView The view to displayed content under the title of this message (optional)
+ @param image A custom icon image (optional)
+ @param pixelRatio The standard calculated pixel ratio for 6/+ vertical upscaling
+ @param notificationType The type (color) of the notification view
+ @param duration The duration this notification should be displayed (optional)
+ @param viewController The view controller this message should be displayed in
+ @param callback The block that should be executed, when the user tapped on the message
+ @param button a custom button that can provide additional functionality (optional)
+ @param buttonTitle The title for button (optional)
+ @param buttonCallback The block that should be executed, when the user tapped on the button
+ @param position The position of the message on the screen
+ @param dismissingEnabled Should this message be dismissed when the user taps/swipes it?
+ */
+- (id)initWithTitle:(NSString *)title
+           subtitleView:(UIView *)subtitleView
+           ctaTitle:(NSString *)ctaTitle
+              image:(UIImage *)image
+         pixelRatio:(CGFloat)pixelRatio
+               type:(TSMessageNotificationType)notificationType
+           duration:(CGFloat)duration
+   inViewController:(UIViewController *)viewController
+           callback:(void (^)())callback
+             button:(UIButton *)button
+        buttonTitle:(NSString *)buttonTitle
+     buttonCallback:(void (^)())buttonCallback
+         atPosition:(TSMessageNotificationPosition)position
+canBeDismissedByUser:(BOOL)dismissingEnabled
+  dismissalCallback:(void (^)())dismissalCallback;
 
 /** Fades out this notification view */
 - (void)fadeMeOut;

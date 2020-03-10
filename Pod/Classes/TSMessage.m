@@ -75,6 +75,7 @@ __weak static UIViewController *_defaultViewController;
     [self showNotificationInViewController:viewController
                                      title:title
                                   subtitle:subtitle
+                                  ctaTitle:nil
                                      image:nil
                                 pixelRatio:pixelRatio
                                       type:type
@@ -99,6 +100,7 @@ __weak static UIViewController *_defaultViewController;
     [self showNotificationInViewController:viewController
                                      title:title
                                   subtitle:subtitle
+                                  ctaTitle:nil
                                      image:nil
                                 pixelRatio:pixelRatio
                                       type:type
@@ -121,6 +123,7 @@ __weak static UIViewController *_defaultViewController;
     [self showNotificationInViewController:viewController
                                      title:title
                                   subtitle:subtitle
+                                  ctaTitle:nil
                                      image:nil
                                 pixelRatio:pixelRatio
                                       type:type
@@ -138,6 +141,7 @@ __weak static UIViewController *_defaultViewController;
 + (void)showNotificationInViewController:(UIViewController *)viewController
                                    title:(NSString *)title
                                 subtitle:(NSString *)subtitle
+                                ctaTitle:(NSString *)ctaTitle
                                    image:(UIImage *)image
                               pixelRatio:(CGFloat)pixelRatio
                                     type:(TSMessageNotificationType)type
@@ -153,6 +157,41 @@ __weak static UIViewController *_defaultViewController;
     // Create the TSMessageView
     TSMessageView *v = [[TSMessageView alloc] initWithTitle:title
                                                    subtitle:subtitle
+                                                   ctaTitle:ctaTitle
+                                                      image:image
+                                                 pixelRatio:pixelRatio
+                                                       type:type
+                                                   duration:duration
+                                           inViewController:viewController
+                                                   callback:callback
+                                                     button:button
+                                                buttonTitle:buttonTitle
+                                             buttonCallback:buttonCallback
+                                                 atPosition:messagePosition
+                                       canBeDismissedByUser:dismissingEnabled
+                                          dismissalCallback:dismissalCallback];
+    [self prepareNotificationToBeShown:v];
+}
+
++ (void)showNotificationInViewController:(UIViewController *)viewController
+                                   title:(NSString *)title
+                            subtitleView:(UIView *)subtitleView
+                                ctaTitle:(NSString *)ctaTitle
+                                   image:(UIImage *)image
+                              pixelRatio:(CGFloat)pixelRatio
+                                    type:(TSMessageNotificationType)type
+                                duration:(NSTimeInterval)duration
+                                callback:(void (^)())callback
+                                  button:(UIButton *)button
+                             buttonTitle:(NSString *)buttonTitle
+                          buttonCallback:(void (^)())buttonCallback
+                              atPosition:(TSMessageNotificationPosition)messagePosition
+                    canBeDismissedByUser:(BOOL)dismissingEnabled
+                       dismissalCallback:(void (^)())dismissalCallback {
+    // Create the TSMessageView
+    TSMessageView *v = [[TSMessageView alloc] initWithTitle:title
+                                                   subtitleView:subtitleView
+                                                   ctaTitle:ctaTitle
                                                       image:image
                                                  pixelRatio:pixelRatio
                                                        type:type
